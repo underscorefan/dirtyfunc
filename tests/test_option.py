@@ -1,4 +1,5 @@
 from dirtyfunc import Option, Nothing
+from .run_async import run_async, simple_coro
 
 
 def test_map():
@@ -27,3 +28,12 @@ def test_filter():
     assert b.filter(lambda x: x > 40).on_value() == 42
     assert b.filter(lambda x: x > 50).on_value() is None
 
+
+def test_value_async():
+    num = 2
+
+    async def opt():
+        a = Option(num)
+        return await a.on_value_awaitable(lambda val: simple_coro(val))
+
+    assert run_async(opt) == num * num

@@ -14,14 +14,13 @@ class Either(Generic[L, R]):
         self.__right = right
 
     def map(self, callback: Callable[[R], T]) -> 'Either[L, T]':
-        if self.__right:
-            return Either(self.__left, callback(self.__right))
-        return self
+        return Either(self.__left, callback(self.__right)) if self.__right else self
 
     def flat_map(self, callback: Callable[[R], 'Either[L, T]']) -> 'Either[L, T]':
-        if self.__right:
-            return callback(self.__right)
-        return self
+        return callback(self.__right) if self.__right else self
+
+    def filter(self, callback: Callable[[R], bool]) -> 'Either[L, R]':
+        return self if self.__right and callback(self.__right) else Left(self.__left)
 
     def on_left(self, callback: Callable[[L], T] = lambda x: x) -> Optional[T]:
         return self.__on_value(self.__left, callback)
@@ -30,10 +29,10 @@ class Either(Generic[L, R]):
         return self.__on_value(self.__right, callback)
 
     async def on_left_awaitable(self, callback: Callable[[L], Awaitable] = lambda x: x) -> Optional[Awaitable]:
-        return self.__on_value_awaitable(self.__left, callback)
+        return await self.__on_value_awaitable(self.__left, callback)
 
-    async def on_right_awaitable(self, callback: Callable[[R], Awaitable] = lambda x: x):
-        return self.__on_value_awaitable(self.__right, callback)
+    async def on_right_awaitable(self, callback: Callable[[R], Awaitable] = lambda x: x) -> Optional[Awaitable]:
+        return await self.__on_value_awaitable(self.__right, callback)
 
     def __bool__(self):
         return self.__right is not None
@@ -62,5 +61,3 @@ class Left(Generic[L], Either[L, None]):
 class Right(Generic[R], Either[None, R]):
     def __init__(self, right: R):
         super().__init__(None, right)
-
-

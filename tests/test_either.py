@@ -1,4 +1,5 @@
 from dirtyfunc import Left, Right, Either
+from .run_async import run_async, arr_coro, simple_coro
 
 
 def test_map():
@@ -33,3 +34,23 @@ def test_attempt():
     new_attempt = Either.attempt(not_raise_it)
     assert new_attempt.on_left() is None
     assert new_attempt.on_right(lambda x: x + 1) == 15
+
+
+def test_async():
+    lst = [i for i in range(3)]
+    add = 3
+
+    async def r_coro():
+        r = Right(right=lst)
+        return await r.on_right_awaitable(lambda x: arr_coro(x, add))
+
+    async def l_coro():
+        left = Left(left=add)
+        return await left.on_left_awaitable(lambda x: simple_coro(x))
+
+    async def both():
+        return await l_coro(), await r_coro()
+
+    values = run_async(both)
+    assert values[1] == [i + add for i in lst]
+    assert values[0] == add * add
