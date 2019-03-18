@@ -23,6 +23,10 @@ class Option(Generic[T]):
     def on_value(self, callback: Callable[[T], Y] = lambda x: x) -> Optional[Y]:
         return callback(self.__val) if self.__val else None
 
+    @property
+    def empty(self) -> bool:
+        return self.__val is None
+
     async def on_value_awaitable(self, callback: Callable[[T], Awaitable[Y]] = lambda x: x):
         return await callback(self.__val) if self.__val else None
 

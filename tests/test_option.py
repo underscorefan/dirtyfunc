@@ -37,3 +37,8 @@ def test_value_async():
         return await a.on_value_awaitable(lambda val: simple_coro(val))
 
     assert run_async(opt) == num * num
+
+
+def test_empty():
+    empty = Nothing()
+    assert empty.empty is True

@@ -54,3 +54,8 @@ def test_async():
     values = run_async(both)
     assert values[1] == [i + add for i in lst]
     assert values[0] == add * add
+
+
+def test_empty():
+    left = Left(1)
+    assert left.empty is True

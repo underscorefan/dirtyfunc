@@ -28,6 +28,10 @@ class Either(Generic[L, R]):
     def on_right(self, callback: Callable[[R], T] = lambda x: x) -> Optional[T]:
         return self.__on_value(self.__right, callback)
 
+    @property
+    def empty(self) -> bool:
+        return self.__right is None
+
     async def on_left_awaitable(self, callback: Callable[[L], Awaitable] = lambda x: x) -> Optional[Awaitable]:
         return await self.__on_value_awaitable(self.__left, callback)
 
