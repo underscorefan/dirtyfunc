@@ -1,5 +1,6 @@
 from dirtyfunc import Left, Right, Either
 from .run_async import run_async, arr_coro, simple_coro
+import asyncio
 
 
 def test_map():
@@ -59,3 +60,17 @@ def test_async():
 def test_empty():
     left = Left(1)
     assert left.empty is True
+
+
+def test_attempt_awaitable():
+
+    async def fail():
+        await asyncio.sleep(1)
+        raise ValueError
+
+    async def attempt_it():
+        return await Either.attempt_awaitable(fail())
+
+    attempt = run_async(attempt_it)
+
+    assert attempt.empty is True

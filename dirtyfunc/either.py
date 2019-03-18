@@ -56,6 +56,13 @@ class Either(Generic[L, R]):
         except Exception as e:
             return Left(e)
 
+    @staticmethod
+    async def attempt_awaitable(awa: Awaitable[R]) -> 'Either[Exception, R]':
+        try:
+            return Right(await awa)
+        except Exception as e:
+            return Left(e)
+
 
 class Left(Generic[L], Either[L, None]):
     def __init__(self, left: L):
