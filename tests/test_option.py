@@ -42,3 +42,10 @@ def test_value_async():
 def test_empty():
     empty = Nothing()
     assert empty.empty is True
+
+
+def test_get_or_else():
+    v1, v2 = 'v', 'c'
+    a = Option(v1)
+    assert a.get_or_else(v2) == v1
+    assert Nothing().get_or_else(v2) == v2

@@ -23,6 +23,9 @@ class Option(Generic[T]):
     def on_value(self, callback: Callable[[T], Y] = lambda x: x) -> Optional[Y]:
         return callback(self.__val) if self.__val else None
 
+    def get_or_else(self, alternative: T) -> T:
+        return alternative if self.empty else self.__val
+
     @property
     def empty(self) -> bool:
         return self.__val is None
@@ -34,6 +37,6 @@ class Option(Generic[T]):
         return self.__val is not None
 
 
-class Nothing(Option[None]):
+class Nothing(Generic[T], Option[T]):
     def __init__(self):
         super().__init__(None)

@@ -22,6 +22,9 @@ class Either(Generic[L, R]):
     def filter(self, callback: Callable[[R], bool]) -> 'Either[L, R]':
         return self if self.__right and callback(self.__right) else Left(self.__left)
 
+    def get_or_else(self, alternative: R) -> R:
+        return alternative if self.empty else self.__right
+
     def on_left(self, callback: Callable[[L], T] = lambda x: x) -> Optional[T]:
         return self.__on_value(self.__left, callback)
 

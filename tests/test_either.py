@@ -74,3 +74,12 @@ def test_attempt_awaitable():
     attempt = run_async(attempt_it)
 
     assert attempt.empty is True
+
+
+def test_get_or_else():
+    v1, v2 = 1, 2
+    a = Left(v1)
+    assert a.get_or_else(v2) == v2
+
+    b = Right(v2)
+    assert b.get_or_else(v1) == v2
