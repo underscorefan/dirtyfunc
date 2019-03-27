@@ -14,10 +14,10 @@ class Either(Generic[L, R]):
         self.__right = right
 
     def map(self, callback: Callable[[R], T]) -> 'Either[L, T]':
-        return Either(self.__left, callback(self.__right)) if self.__right else self
+        return Either(self.__left, callback(self.__right)) if not self.empty else self
 
     def flat_map(self, callback: Callable[[R], 'Either[L, T]']) -> 'Either[L, T]':
-        return callback(self.__right) if self.__right else self
+        return callback(self.__right) if not self.empty else self
 
     def filter(self, callback: Callable[[R], bool]) -> 'Either[L, R]':
         return self if self.__right and callback(self.__right) else Left(self.__left)
@@ -46,11 +46,11 @@ class Either(Generic[L, R]):
 
     @staticmethod
     async def __on_value_awaitable(value: Optional[C], callback: Callable[[C], T]):
-        return await callback(value) if value else None
+        return await callback(value) if value is not None else None
 
     @staticmethod
     def __on_value(value: Optional[C], callback: Callable[[C], T]):
-        return callback(value) if value else None
+        return callback(value) if value is not None else None
 
     @staticmethod
     def attempt(f: Callable[[], R]) -> 'Either[Exception, R]':

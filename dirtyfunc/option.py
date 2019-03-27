@@ -11,7 +11,7 @@ class Option(Generic[T]):
         self.__val = val
 
     def map(self, callback: Callable[[T], Y]) -> 'Option[Y]':
-        return Option(callback(self.__val)) if self.__val else Nothing()
+        return Option(callback(self.__val)) if not self.empty else Nothing()
 
     def flat_map(self, callback: Callable[[T], 'Option[Y]']) -> 'Option[Y]':
         value = self.map(callback).__val
@@ -21,7 +21,7 @@ class Option(Generic[T]):
         return self if self.map(callback).__val else Nothing()
 
     def on_value(self, callback: Callable[[T], Y] = lambda x: x) -> Optional[Y]:
-        return callback(self.__val) if self.__val else None
+        return callback(self.__val) if self.__val is not None else None
 
     def get_or_else(self, alternative: T) -> T:
         return alternative if self.empty else self.__val
